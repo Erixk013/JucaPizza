@@ -8,7 +8,7 @@ class Database {
     private $db_name = 'jucapizzasdb';
     private $username = 'root';
     private $password = 'usbw';
-    private $port = '3311';
+    private $port = '3310';
  
     public $conn;
  

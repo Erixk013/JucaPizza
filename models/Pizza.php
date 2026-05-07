@@ -5,15 +5,15 @@ class Pizza{
 
     public $idPizza;
     public $nome;
-    public $descricao;
-    public $preco;
+    public $ingredientes;
+    public $valor;
 
     public function __construct($db){
         $this->conn = $db;
     }
 
     public function getall(){
-        $query = "SELECT idPizza, nome, descricao, preco FROM " . $this->tabela;
+        $query = "SELECT idPizza, nome, ingredientes, valor FROM " . $this->tabela;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -35,7 +35,7 @@ class Pizza{
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         
         $this->nome = $row['nome'];
-        $this->descricao = $row['ingredientes'];
-        $this->preco = $row['valor'];
+        $this->ingredientes = $row['ingredientes'];
+        $this->valor = $row['valor'];
     }
 }

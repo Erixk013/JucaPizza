@@ -14,8 +14,8 @@ $pizza = new Pizza($db);
  
 // Atribuímos valores às suas propriedades públicas
 $pizza->nome = 'Margherita';
-$pizza->descricao = 'Mussarela, fatias de tomate e manjericão fresco';
-$pizza->preco = 42.50;
+$pizza->ingredientes = 'Mussarela, fatias de tomate e manjericão fresco';
+$pizza->valor = 42.50;
  
 // Vamos inspecionar o objeto!
 echo "<pre>"; // A tag <pre> ajuda a formatar a saída do print_r
