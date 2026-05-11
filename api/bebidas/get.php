@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
  
         // Converte para JSON e envia a resposta
         // `JSON_PRETTY_PRINT` é opcional, mas deixa o JSON mais legível
-        echo json_encode($bebida_arr, JSON_PRETTY_PRINT);
+        echo json_encode($bebida_arr);
     } else {
  
  
