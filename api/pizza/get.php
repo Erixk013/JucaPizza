@@ -34,10 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         // `JSON_PRETTY_PRINT` é opcional, mas deixa o JSON mais legível
         echo json_encode($pizza_arr);
     } else {
- 
- 
+        http_response_code(400);
+        echo json_encode(
+            array("Mensagem" => "ID da pizza não informado.")
+        );
     }
-}else {
+} else {
      http_response_code(405);
     echo json_encode(
             array("Mensagem" => "Método não permitido.")

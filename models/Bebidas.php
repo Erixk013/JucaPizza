@@ -28,27 +28,31 @@ class Bebidas {
 
 // método para obter uma pizza específica do banco de dados com base no idPizza
 public function get() {
+
     $query = "SELECT idBebidas, nome, litros, valor 
     FROM " . $this->tabela . " 
     WHERE idBebidas = ? 
     LIMIT 1";
 
-    // prepara a consulta SQL usando a conexão com o banco de dados, vinculando o parâmetro idPizza à consulta, executando a consulta e retornando a linha resultante como um array associativo
     $stmt = $this->conn->prepare($query);
-    // vincula o valor da propriedade idPizza ao primeiro parâmetro da consulta SQL usando o método bindParam, que é uma forma segura de passar valores para a consulta e evitar ataques de injeção de SQL
+
     $stmt->bindParam(1, $this->idBebidas);
-    // executa a consulta SQL preparada
+
     $stmt->execute();
+
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($row) {
-        $this->idBebidas = $row['idBebidas'];
-        $this->nome = $row['nome'];
-        $this->litros = $row['litros'];
-        $this->valor = $row['valor'];
+    // se não encontrou
+    if(!$row){
+        return false;
     }
 
-    return $row;
+    $this->idBebidas = $row['idBebidas'];
+    $this->nome = $row['nome'];
+    $this->litros = $row['litros'];
+    $this->valor = $row['valor'];
+
+    return true;
 }
 
     public function create() {
