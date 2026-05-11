@@ -19,22 +19,25 @@ class Bebidas{
         return $stmt;
     }
     public function get(){
-        $query = 'SELECT
-    idbebida,
-    nome,
-    litros,
-    valor
+    $query = 'SELECT
+        idBebida,
+        nome,
+        litros,
+        valor
     FROM ' . $this->tabela . '
     WHERE
-        idbebida = ?
+        idBebida = ?
     LIMIT 1';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->idBebida);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        $this->nome = $row['nome'];
-        $this->litros = $row['litros'];
-        $this->valor = $row['valor'];
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $this->idBebida);
+    $stmt->execute();
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $this->nome = $row['nome'];
+    $this->litros = $row['litros'];
+    $this->idBebida = $row['idBebida'];
+    $this->valor = $row['valor'];
     }
 }

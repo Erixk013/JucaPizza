@@ -12,27 +12,27 @@ include_once '../../models/Bebidas.php';
 $database = new Database();
 $db = $database->getConnection();
  
-// Instanciar o objeto Bebidas
-$bebida = new Bebidas($db);
+// Instanciar o objeto Pizza
+$bebidas = new Bebidas($db);
  
-$bebida->idBebida = isset($_GET['id']) ? $_GET['id'] : null;
+$bebidas->idBebidas = isset($_GET['id']) ? $_GET['id'] : null;
  
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($bebida->idBebida) {
-        // Busca a bebida
-        $bebida->get();
+    if ($bebidas->idBebidas) {
+        // Busca a pizza
+        $bebidas->get();
  
         // Cria o array de resposta
-        $bebida_arr = array(
-            "id" => $bebida->idBebida,
-            "nome" => $bebida->nome,
-            "litros" => $bebida->litros,
-            "valor" => $bebida->valor
+            $bebida_arr = array(
+            "id" => $bebidas->idBebidas,
+            "nome" => $bebidas->nome,
+            "litros" => $bebidas->litros,
+            "valor" => $bebidas->valor
         );
  
         // Converte para JSON e envia a resposta
         // `JSON_PRETTY_PRINT` é opcional, mas deixa o JSON mais legível
-        echo json_encode($bebida_arr);
+        echo json_encode($bebida_arr, JSON_PRETTY_PRINT);
     } else {
  
  
@@ -43,3 +43,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             array("Mensagem" => "Método não permitido.")
         );
 }
+ 
