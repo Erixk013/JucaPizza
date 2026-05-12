@@ -1,5 +1,6 @@
 <?php
-//CRIAÇÃO ROTA GET.PHP
+// CRIAÇÃO ROTA GET.PHP
+ 
 // Headers obrigatórios
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -12,17 +13,34 @@ include_once '../../models/Pizza.php';
 $database = new Database();
 $db = $database->getConnection();
  
+if (!$db) {
+    header("HTTP/1.1 500 Internal Server Error");
+    echo json_encode(array(
+        "message" => "Erro de conexão com o banco de dados."
+    ));
+    exit;
+}
+ 
 // Instanciar o objeto Pizza
 $pizza = new Pizza($db);
  
-$pizza->idPizza = isset($_GET['id']) ? $_GET['id'] : null;
+// Verifica se o ID foi enviado
+$pizza->idPizza = isset($_GET['id']) ? (int) $_GET['id'] : 0;
  
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($pizza->idPizza) {
-        // Busca a pizza
-        $pizza->get();
  
-        // Cria o array de resposta
+    // ID não informado
+    if ($pizza->idPizza <= 0) {
+ 
+        header("HTTP/1.1 400 Bad Request");
+ 
+        echo json_encode(array(
+            "message" => "id não informado."
+        ));
+ 
+    // ID informado e encontrado
+    } elseif ($pizza->get()) {
+ 
         $pizza_arr = array(
             "id" => $pizza->idPizza,
             "nome" => $pizza->nome,
@@ -30,18 +48,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             "valor" => $pizza->valor
         );
  
-        // Converte para JSON e envia a resposta
-        // `JSON_PRETTY_PRINT` é opcional, mas deixa o JSON mais legível
         echo json_encode($pizza_arr);
+ 
+    // ID informado mas não existe
     } else {
-        http_response_code(400);
-        echo json_encode(
-            array("Mensagem" => "ID da pizza não informado.")
-        );
+ 
+        header("HTTP/1.1 404 Not Found");
+ 
+        echo json_encode(array(
+            "message" => "id inválido."
+        ));
     }
+ 
 } else {
-     http_response_code(405);
-    echo json_encode(
-            array("Mensagem" => "Método não permitido.")
-        );
+ 
+    header("HTTP/1.1 405 Method Not Allowed");
+ 
+    echo json_encode(array(
+        "message" => "Método não permitido."
+    ));
 }
+?>
