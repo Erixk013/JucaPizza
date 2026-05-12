@@ -1,5 +1,4 @@
-config/Database.php
- 
+
 <?php
 
 
@@ -38,12 +37,9 @@ class Database {
         } catch (PDOException $e) {
 
             echo 'Erro de Conexão: ' . $e->getMessage();
-
         } catch (Throwable $e) {
-
             echo 'Erro genérico: ' . $e->getMessage();
         }
-
         return $this->conn;
     }
 }
