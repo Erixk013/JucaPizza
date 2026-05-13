@@ -1,50 +1,51 @@
 <?php
-
-header("Content-Type: application/json");
-
-include_once '../config/Database.php';
-include_once '../models/Bebidas.php';
-
+//CRIAÇÃO ROTA GET.PHP
+// Headers obrigatórios
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+ 
+// Incluir arquivos de banco de dados e modelo
+include_once '../../config/Database.php';
+include_once '../../models/bebidas.php';
+ 
+// Instanciar o objeto Database e obter a conexão
 $database = new Database();
 $db = $database->getConnection();
-
+ 
+// Instanciar o objeto Bebidas
 $bebidas = new Bebidas($db);
+ 
+$bebidas->idBebidas = isset($_GET['id']) ? $_GET['id'] : null;
+ 
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    // ID não informado
+    if ($bebidas->idBebidas <= 0) {
+        header("HTTP/1.1 400 Bad Request");
+        echo json_encode(array(
+            "message" => "id não informado."
+        ));
+    } elseif ($bebidas->get()) {
 
-// verifica se enviou id
-if(!isset($_GET['id'])){
+    header("HTTP/1.1 200 OK");
 
-    http_response_code(400);
-
-    echo json_encode(array(
-        "message" => "ID não informado"
-    ));
-
-    exit();
-}
-
-$bebidas->idBebidas = $_GET['id'];
-
-// tenta buscar
-if($bebidas->get()){
-
-    $bebida_arr = array(
+    $bebidas_arr = array(
         "idBebidas" => $bebidas->idBebidas,
         "nome" => $bebidas->nome,
         "litros" => $bebidas->litros,
         "valor" => $bebidas->valor
     );
 
-    http_response_code(200);
-
-    echo json_encode($bebida_arr);
-
+    echo json_encode($bebidas_arr);
+    } else {
+        header("HTTP/1.1 404 Not Found");
+        echo json_encode(array(
+            "message" => "id inválido."
+        ));
+    }
 } else {
-
-    http_response_code(404);
-
+    header("HTTP/1.1 405 Method Not Allowed");
     echo json_encode(array(
-        "message" => "Bebida não encontrada"
+        "message" => "Método não permitido."
     ));
 }
-
 ?>
