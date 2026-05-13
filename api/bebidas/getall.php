@@ -47,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
  
         // Definir o código de resposta como 200 OK
-        http_response_code(200);
+        header("HTTP/1.1 200 OK");
  
         // Mostrar os dados das bebidas em formato JSON
         echo json_encode($bebidas_arr);
     } else {
         // Se nenhuma bebida for encontrada, definir o código de resposta como 404 Not Found
-        http_response_code(404);
+        header("HTTP/1.1 404 Not Found");
  
         // Informar ao usuário que nenhuma bebida foi encontrada
         echo json_encode(
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 } else {
     // Se o método HTTP não for GET, definir o código de resposta como 405 Method Not Allowed
-    http_response_code(405);
+    header("HTTP/1.1 405 Method Not Allowed");
  
     // Informar ao usuário que o método não é permitido
     echo json_encode(
