@@ -116,15 +116,16 @@ class Pizza
     }
  
     /**
-     * Apaga UMA linha com aquele id. LIMIT 1 é uma rede de segurança extra.
-     * Devolve true se apagou, false se não havia ninguém com esse id.
+     * Apaga UMA linha com aquele id. Devolve true se apagou, false se não havia ninguém com esse id.
      */
     public function delete()
     {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idPizza = ? LIMIT 1";
+        $query = "DELETE FROM " . $this->tabela . " WHERE idPizza = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->idPizza);
-        $stmt->execute();
+        $stmt->bindValue(':id', $this->idPizza);
+        if (!$stmt->execute()) {
+            return false;
+        }
         return $stmt->rowCount() > 0;
     }
 }

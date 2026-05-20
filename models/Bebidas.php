@@ -81,12 +81,15 @@ public function get() {
         return $stmt->rowCount() > 0;
     }
 
-    public function delete() {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idBebidas = ? LIMIT 1";
+public function delete()
+    {
+        $query = "DELETE FROM " . $this->tabela . " WHERE idBebidas = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->idBebidas);
-        $stmt->execute();
-        return $stmt->rowCount() > 0;
+        $stmt->bindValue(':id', $this->idBebidas);
+        if (!$stmt->execute()) {
+            return false;
+        }
+        $this->idBebidas = $this->conn->lastInsertId();
+        return true;
     }
-
 }
