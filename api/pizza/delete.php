@@ -1,108 +1,35 @@
 <?php
-/**
- * =========================================================================
- * O QUE É ESTE FICHEIRO? (bem simples)
- * =========================================================================
- * Igual à ideia do Pizza.php, mas para a tabela `bebidas`. É o "tradutor" entre
- * o PHP e as linhas da base de dados: ler lista, ler uma, criar, atualizar, apagar.
- *
- * A classe chama-se Bebidas (plural) mas cada objeto representa uma bebida / registo.
- */
- 
-class Bebidas
-{
-    private $conn;
-    private $tabela = "pizzas";
- 
-    public $idPizzas;
-    public $nome;
-    public $litros;
-    public $valor;
- 
-    public function __construct($db)
-    {
-        $this->conn = $db;
-    }
- 
-    /**
-     * Lista todas as pizzas da tabela. Devolve o resultado PDO para o getall.php percorrer.
-     */
-    public function getall()
-    {
-        $query = "SELECT idPizzas, nome, litros, valor FROM " . $this->tabela;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt;
-    }
- 
-    /**
-     * Uma pizza pelo id em $this->idPizzas. Preenche o objeto se existir; senão devolve false.
-     */
-    public function get()
-    {
-        $query = "SELECT idPizzas, nome, litros, valor
-            FROM " . $this->tabela . "
-            WHERE idPizzas = ?
-            LIMIT 1";
- 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->idPizzas);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
- 
-        if ($row) {
-            $this->idPizzas = $row['idPizzas'];
-            $this->nome = $row['nome'];
-            $this->litros = $row['litros'];
-            $this->valor = $row['valor'];
-        }
- 
-        return $row;
-    }
- 
-    /**
-     * Insere pizza nova; depois guarda o id gerado pelo MySQL em idPizzas.
-     */
-    public function create()
-    {
-        $query = "INSERT INTO " . $this->tabela . " (nome, litros, valor) VALUES (:nome, :litros, :valor)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':nome', $this->nome);
-        $stmt->bindValue(':litros', $this->litros);
-        $stmt->bindValue(':valor', $this->valor);
-        if (!$stmt->execute()) {
-            return false;
-        }
-        $this->idPizzas = $this->conn->lastInsertId();
-        return true;
-    }
- 
-    /**
-     * Atualiza a linha com id = idPizzas. true se alterou alguma coisa.
-     */
-    public function update()
-    {
-        $query = "UPDATE " . $this->tabela . "
-            SET nome = :nome, litros = :litros, valor = :valor
-            WHERE idPizzas = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':nome', $this->nome);
-        $stmt->bindValue(':litros', $this->litros);
-        $stmt->bindValue(':valor', $this->valor);
-        $stmt->bindValue(':id', $this->idPizzas);
-        $stmt->execute();
-        return $stmt->rowCount() > 0;
-    }
- 
-   public function delete()
-    {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idPizzas = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':id', $this->idPizzas);
-        if (!$stmt->execute()) {
-            return false;
-        }
-        $this->idPizzas = $this->conn->lastInsertId();
-        return true;
-    }
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: DELETE, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("HTTP/1.1 204 No Content");
+    exit;
+}
+
+include_once '../../config/Database.php';
+include_once '../../models/Bebidas.php';
+
+$data = json_decode(file_get_contents("php://input"));
+
+if (!$data || !isset($data->id)) {
+    header("HTTP/1.1 400 Bad Request");
+    echo json_encode(array("message" => "Envie JSON com o id da bebida."));
+    exit;
+}
+
+$database = new Database();
+$db = $database->getConnection();
+$bebida = new Bebidas($db);
+
+$bebida->idBebidas = $data->id;
+
+if ($bebida->delete()) {
+    header("HTTP/1.1 200 OK");
+    echo json_encode(array("message" => "Bebida apagada."));
+} else {
+    header("HTTP/1.1 404 Not Found");
+    echo json_encode(array("message" => "Não foi possível apagar a bebida."));
 }

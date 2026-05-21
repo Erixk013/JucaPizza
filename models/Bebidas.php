@@ -89,7 +89,6 @@ public function delete()
         if (!$stmt->execute()) {
             return false;
         }
-        $this->idBebidas = $this->conn->lastInsertId();
-        return true;
+        return $stmt->rowCount() > 0;
     }
 }
